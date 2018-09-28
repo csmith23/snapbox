@@ -30,7 +30,6 @@ class Snapbox extends Component {
     if (this.state.first_render) {
       // console.log(this.props.name + ' did first render')
       this.state.first_render = false
-      console.log(this.props)
       return (
         <div style={{position: 'absolute', overflow: 'hidden', top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
           <div className={this.props.className} ref={this.state.refclassname}>
@@ -165,8 +164,8 @@ class Snapbox extends Component {
     this.state.width = this.state.height = 0
     // goes through ref children, finds its width and height based on that
     this.state.refchildren.forEach((node) => {
-      if (this.state.width < node.current.offsetWidth) { this.state.width = node.current.offsetWidth }
-      if (this.state.height < node.current.offsetHeight) { this.state.height = node.current.offsetHeight }
+      if (this.state.width < node.offsetWidth) { this.state.width = node.offsetWidth }
+      if (this.state.height < node.offsetHeight) { this.state.height = node.offsetHeight }
     })
     if (this.state.refclassname.current !== null) {
       if (this.state.width < this.state.refclassname.current.offsetWidth) { this.state.width = this.state.refclassname.current.offsetWidth }
