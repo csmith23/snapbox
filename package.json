@@ -1,0 +1,19 @@
+{
+  "name": "snapbox",
+  "version": "1.0.0",
+  "description": "A fast and easy way to take UI layout from the page to the display",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "snapbox",
+    "layout"
+  ],
+  "author": "Coleman Smith <csmitt23@gmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "react": "^16.5.2"
+  }
+}
