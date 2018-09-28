@@ -250,4 +250,4 @@ Snapbox.propTypes = {
   is_snapbox: PropTypes.bool,
 }
 
-export default CSSModules(Snapbox, styles)
+export default Snapbox
