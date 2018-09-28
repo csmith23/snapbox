@@ -36,7 +36,7 @@ class Snapbox extends Component {
   render() {
     // on first render, pass the proper props to children and get refs from non-snapbox children
     if (this.state.first_render) {
-      console.log(this.props.name + ' did first render')
+      // console.log(this.props.name + ' did first render')
       this.state.first_render = false
       return (
         <div className={this.props.classes.snapbox} style={{top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
@@ -53,45 +53,45 @@ class Snapbox extends Component {
         </div>
       )
     }
-    console.log(this.props.name + ' did render')
+    // console.log(this.props.name + ' did render')
     let center, topleft, topright, bottomleft, bottomright, centerset, xset, yset
     center = false
-    topleft = {x: 0, y: 0, xset: false, yset: false}
-    topright = {x: 0, y: 0, xset: false, yset: false}
-    bottomleft = {x: 0, y: 0, xset: false, yset: false}
-    bottomright = {x: 0, y: 0, xset: false, yset: false}
+    topleft = {x: null, y: null}
+    topright = {x: null, y: null}
+    bottomleft = {x: null, y: null}
+    bottomright = {x: null, y: null}
     centerset = xset = yset = false
     this.props.processedsnaps.forEach((snap) => {
       let point = snap.locator(snap.snappoint)
-      console.log(this.props.name + ' snapped ' + snap.localpoint + ' to ' + snap.snappoint)
+      // console.log(this.props.name + ' snapped ' + snap.localpoint + ' to ' + snap.snappoint)
       if (snap.localpoint.includes('top')) {
         yset = true
-        if (!snap.localpoint.includes('left')) { topright.y = point.y; topright.yset = true }
-        if (!snap.localpoint.includes('right')) { topleft.y = point.y; topleft.yset = true }
+        if (!snap.localpoint.includes('left')) { topright.y = point.y }
+        if (!snap.localpoint.includes('right')) { topleft.y = point.y }
       }
       else if (snap.localpoint.includes('bottom')) {
         yset = true
-        if (!snap.localpoint.includes('left')) { bottomright.y = point.y; bottomright.yset = true }
-        if (!snap.localpoint.includes('right')) { bottomleft.y = point.y; bottomleft.yset = true }
+        if (!snap.localpoint.includes('left')) { bottomright.y = point.y }
+        if (!snap.localpoint.includes('right')) { bottomleft.y = point.y }
       }
       if (snap.localpoint.includes('left')) {
         xset = true
-        if (!snap.localpoint.includes('top')) { bottomleft.x = point.x; bottomleft.xset = true }
-        if (!snap.localpoint.includes('bottom')) { topleft.x = point.x; topleft.xset = true }
+        if (!snap.localpoint.includes('top')) { bottomleft.x = point.x }
+        if (!snap.localpoint.includes('bottom')) { topleft.x = point.x }
       }
       else if (snap.localpoint.includes('right')) {
         xset = true
-        if (!snap.localpoint.includes('top')) { bottomright.x = point.x; bottomright.xset = true }
-        if (!snap.localpoint.includes('bottom')) { topright.x = point.x; topright.xset = true }
+        if (!snap.localpoint.includes('top')) { bottomright.x = point.x }
+        if (!snap.localpoint.includes('bottom')) { topright.x = point.x }
       }
       if (snap.localpoint === 'center') { center = point; centerset = true }
     })
     // first, top left and top right have to have the same y, the max of the two and so on, but only if that value was actually set
     topleft.y = topright.y = Math.max(topleft.y, topright.y)
-    bottomleft.y = bottomright.y = bottomleft.yset ? bottomright.yset ? Math.min(bottomleft.y, bottomright.y) : bottomleft.y : bottomright.yset ? bottomright.y : 0
+    bottomleft.y = bottomright.y = bottomleft.y === null ? bottomright.y === null ? 0 : bottomright.y : bottomright.y === null ? bottomrleft.y : Math.min(bottomleft.y, bottomright.y) : bottomleft.y : bottomright.yset ? bottomright.y : 0
     topleft.x = bottomleft.x = Math.max(topleft.x, bottomleft.x)
-    topright.x = bottomright.x = topright.xset ? bottomright.xset ? Math.min(topright.x, bottomright.x) : topright.x : bottomright.xset ? bottomright.x : 0
-    // now get the distance from the center to each edge. if there is no center defined, then it doesn't matter
+    topright.x = bottomright.x = topright.x === null ? bottomright.x === null ? 0 : bottomright.x : bottomright.x === null ? topright.x : Math.min(topright.x, bottomright.x) : topright.x : bottomright.xset ? bottomright.x : 0
+    // if center was defined, get the distance from the center to each edge
     // if there was a center defined, shrink the box to put it in the middle
     if (centerset) {
       let minheight, minwidth // both half the minimum height and minimum width
@@ -152,7 +152,7 @@ class Snapbox extends Component {
   }
   componentDidMount() {
     // updateDimensions() to get initial size and then add window resize listener
-    console.log(this.props.name + ' did mount')
+    // console.log(this.props.name + ' did mount')
     this.updateDimensions()
     window.addEventListener('resize', this.updateDimensions)
   }
@@ -168,6 +168,8 @@ class Snapbox extends Component {
     if (this.state.height < partialState.height) { this.state.height = partialState.height }
   }
   updateDimensions = () => {
+    // reset the height and width of the component for new calculations
+    this.state.width = this.state.height = 0
     // goes through ref children, finds its width and height based on that
     this.state.refchildren.forEach((node) => {
       if (this.state.width < node.current.offsetWidth) { this.state.width = node.current.offsetWidth }
@@ -188,10 +190,7 @@ class Snapbox extends Component {
   }
   getPointPosition = (snapPoint) => {
     // takes in a snappoint and returns that points coordinates
-    let pointPosition = {
-      x: null,
-      y: null,
-    }
+    let pointPosition = {x: 0, y: 0}
     if (snapPoint.includes('top')) {
       pointPosition.y = this.state.top
     }
