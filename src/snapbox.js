@@ -88,9 +88,9 @@ class Snapbox extends Component {
     })
     // first, top left and top right have to have the same y, the max of the two and so on, but only if that value was actually set
     topleft.y = topright.y = Math.max(topleft.y, topright.y)
-    bottomleft.y = bottomright.y = bottomleft.y === null ? bottomright.y === null ? 0 : bottomright.y : bottomright.y === null ? bottomrleft.y : Math.min(bottomleft.y, bottomright.y) : bottomleft.y : bottomright.yset ? bottomright.y : 0
+    bottomleft.y = bottomright.y = bottomleft.y === null ? bottomright.y === null ? 0 : bottomright.y : bottomright.y === null ? bottomrleft.y : Math.min(bottomleft.y, bottomright.y)
     topleft.x = bottomleft.x = Math.max(topleft.x, bottomleft.x)
-    topright.x = bottomright.x = topright.x === null ? bottomright.x === null ? 0 : bottomright.x : bottomright.x === null ? topright.x : Math.min(topright.x, bottomright.x) : topright.x : bottomright.xset ? bottomright.x : 0
+    topright.x = bottomright.x = topright.x === null ? bottomright.x === null ? 0 : bottomright.x : bottomright.x === null ? topright.x : Math.min(topright.x, bottomright.x)
     // if center was defined, get the distance from the center to each edge
     // if there was a center defined, shrink the box to put it in the middle
     if (centerset) {
