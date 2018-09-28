@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import withStyles, { ThemeProvider } from 'react-jss'
+import injectSheet, { ThemeProvider } from 'react-jss'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
@@ -257,4 +257,4 @@ Snapbox.propTypes = {
   is_snapbox: PropTypes.bool,
 }
 
-export default withStyles(styles)(Snapbox)
+export default injectSheet(styles)(Snapbox)
