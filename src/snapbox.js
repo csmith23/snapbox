@@ -1,15 +1,7 @@
 import React, { Component } from 'react'
 
-import injectSheet, { ThemeProvider } from 'react-jss'
+// import injectSheet, { ThemeProvider } from 'react-jss'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
-
-const styles = theme => ({
-  snapbox: {
-    position: 'absolute',
-    overflow: 'hidden',
-  },
-})
 
 class Snapbox extends Component {
   static defaultProps = {
@@ -38,8 +30,9 @@ class Snapbox extends Component {
     if (this.state.first_render) {
       // console.log(this.props.name + ' did first render')
       this.state.first_render = false
+      console.log(this.props)
       return (
-        <div className={this.props.classes.snapbox} style={{top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
+        <div style={{position: 'absolute', overflow: 'hidden', top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
           <div className={this.props.className} ref={this.state.refclassname}>
             {
               React.Children.map(this.props.children, (child) => {
@@ -122,7 +115,7 @@ class Snapbox extends Component {
       this.state.width = topright.x - topleft.x
     }
     return(
-      <div className={this.props.classes.snapbox} style={{top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
+      <div style={{position: 'absolute', overflow: 'hidden', top: this.state.top, left: this.state.left, height: this.state.height, width: this.state.width}}>
         <div className={this.props.className} ref={this.state.refclassname}>
           {
             React.Children.map(this.props.children, (child) => {
@@ -257,4 +250,4 @@ Snapbox.propTypes = {
   is_snapbox: PropTypes.bool,
 }
 
-export default injectSheet(styles)(Snapbox)
+export default CSSModules(Snapbox, styles)
