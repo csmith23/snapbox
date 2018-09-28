@@ -1,6 +1,6 @@
 {
   "name": "snapbox",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A fast and easy way to take UI layout from the page to the display",
   "main": "dist/snapbox.min.js",
   "scripts": {
