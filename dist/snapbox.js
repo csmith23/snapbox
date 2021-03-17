@@ -94,25 +94,25 @@ function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   let { width, height } = dimensions;
 
   if (typeof(width) === 'number')                                             // % of viewport
-    width = width * mainPosition.width;
+    width = width * viewportPosition.width;
   else if (typeof(width) === 'string') {
     if (/^[0-9]+px$/.test(width))                                             // px
       width = parseInt(width.slice(0, -2));
     else if (/^[0-9]+(?:.[0-9]+)?%$/.test(width))                             // % of parent
       width = parseFloat(width.slice(0, -1)) / 100 * parentPosition.width;
     else if (/^[0-9]+(?:.[0-9]+)?$/.test(width))                              // % of viewport
-      width = parseFloat(width) / 100 * mainPosition.width;
+      width = parseFloat(width) / 100 * viewportPosition.width;
   }
 
   if (typeof(height) === 'number')                                            // % of viewport
-    height = height * mainPosition.height;
+    height = height * viewportPosition.height;
   else if (typeof(height) === 'string') {
     if (/^[0-9]+px$/.test(height))                                            // px
       height = parseInt(height.slice(0, -2));
     else if (/^[0-9]+(?:.[0-9]+)?%$/.test(height))                            // % of parent
       height = parseFloat(height.slice(0, -1)) / 100 * parentPosition.height;
     else if (/^[0-9]+(?:.[0-9]+)?$/.test(height))                             // % of viewport
-      height = parseFloat(height) / 100 * mainPosition.height;
+      height = parseFloat(height) / 100 * viewportPosition.height;
   }
 
   return { width, height };
@@ -194,9 +194,12 @@ function Snapbox(props) {
 
     let parent_snap_location;
     if (location.includes(' ') && props._parent) {
-      const [parent, parent_snap] = location.split(' ');
+      const [parent, parent_snap, ...rest] = location.split(' ');
+      if (rest.length !== 0) {
+        throw 'Error: Problem with snap "' + location + '" in props of Snapbox "' + props.snapboxName + '"';
+      }
       if (props._parent_positions[parent] === 'undefined') {
-        throw 'Snapbox ' + props.snapboxName + ' has no parent Snapbox named ' + parent;
+        throw 'Error: Snapbox "' + props.snapboxName + '" has no parent Snapbox named "' + parent + '"';
       }
 
       parent_snap_location = get_snap_coordinates(props._parent_positions[parent], parent_snap);
@@ -205,7 +208,7 @@ function Snapbox(props) {
       parent_snap_location = get_snap_coordinates(viewport_position, location);
     }
     else {
-      throw 'Snapbox ' + props.snapboxName + ' has no Snapbox parents, cannot snap to ' + location;
+      throw 'Error: Snapbox "' + props.snapboxName + '" has no Snapbox parents, cannot snap to "' + location + '"';
     }
 
     add_anchors_and_reflections(anchors_and_reflections, snap, parent_snap_location);
@@ -234,48 +237,26 @@ function Snapbox(props) {
     height: position.height,
     position: 'fixed',
   };
-  if (props.main) {
-    if (other_children.length) {
-      return (
-        <div snapboxname={props.snapboxName} style={css} snapboxmain='true'>
-          {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
-            {other_children}
-          </div>}
-          {snapbox_children}
-        </div>
-      );
-    }
-    else {
-      return (
-        <div snapboxname={props.snapboxName} style={css} snapboxmain='true'>
-          {snapbox_children}
-        </div>
-      );
-    }
+  if (other_children.length) {
+    return (
+      <div snapboxname={props.snapboxName} style={css}>
+        {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
+          {other_children}
+        </div>}
+        {snapbox_children}
+      </div>
+    );
   }
   else {
-    if (other_children.length) {
-      return (
-        <div snapboxname={props.snapboxName} style={css}>
-          {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
-            {other_children}
-          </div>}
-          {snapbox_children}
-        </div>
-      );
-    }
-    else {
-      return (
-        <div snapboxname={props.snapboxName} style={css}>
-          {snapbox_children}
-        </div>
-      );
-    }
+    return (
+      <div snapboxname={props.snapboxName} style={css}>
+        {snapbox_children}
+      </div>
+    );
   }
 }
 
 Snapbox.defaultProps = {
-  main: false,
   snapboxName: 'main',
   snaps: {},
   snapboxStyle: {},

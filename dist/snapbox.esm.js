@@ -53,8 +53,16 @@ function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 
+function _toArray(arr) {
+  return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest();
+}
+
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 
 function _iterableToArrayLimit(arr, i) {
@@ -195,18 +203,18 @@ function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   var width = dimensions.width,
       height = dimensions.height;
   if (typeof width === 'number') // % of viewport
-    width = width * mainPosition.width;else if (typeof width === 'string') {
+    width = width * viewportPosition.width;else if (typeof width === 'string') {
     if (/^[0-9]+px$/.test(width)) // px
       width = parseInt(width.slice(0, -2));else if (/^[0-9]+(?:.[0-9]+)?%$/.test(width)) // % of parent
       width = parseFloat(width.slice(0, -1)) / 100 * parentPosition.width;else if (/^[0-9]+(?:.[0-9]+)?$/.test(width)) // % of viewport
-      width = parseFloat(width) / 100 * mainPosition.width;
+      width = parseFloat(width) / 100 * viewportPosition.width;
   }
   if (typeof height === 'number') // % of viewport
-    height = height * mainPosition.height;else if (typeof height === 'string') {
+    height = height * viewportPosition.height;else if (typeof height === 'string') {
     if (/^[0-9]+px$/.test(height)) // px
       height = parseInt(height.slice(0, -2));else if (/^[0-9]+(?:.[0-9]+)?%$/.test(height)) // % of parent
       height = parseFloat(height.slice(0, -1)) / 100 * parentPosition.height;else if (/^[0-9]+(?:.[0-9]+)?$/.test(height)) // % of viewport
-      height = parseFloat(height) / 100 * mainPosition.height;
+      height = parseFloat(height) / 100 * viewportPosition.height;
   }
   return {
     width: width,
@@ -285,24 +293,29 @@ function Snapbox(props) {
 
     if (location.includes(' ') && props._parent) {
       var _location$split = location.split(' '),
-          _location$split2 = _slicedToArray(_location$split, 2),
+          _location$split2 = _toArray(_location$split),
           parent = _location$split2[0],
-          parent_snap = _location$split2[1];
+          parent_snap = _location$split2[1],
+          rest = _location$split2.slice(2);
+
+      if (rest.length !== 0) {
+        throw 'Error: Problem with snap "' + location + '" in props of Snapbox "' + props.snapboxName + '"';
+      }
 
       if (props._parent_positions[parent] === 'undefined') {
-        throw 'Snapbox ' + props.snapboxName + ' has no parent Snapbox named ' + parent;
+        throw 'Error: Snapbox "' + props.snapboxName + '" has no parent Snapbox named "' + parent + '"';
       }
 
       parent_snap_location = get_snap_coordinates(props._parent_positions[parent], parent_snap);
     } else if (!location.includes(' ')) {
       parent_snap_location = get_snap_coordinates(viewport_position, location);
     } else {
-      throw 'Snapbox ' + props.snapboxName + ' has no Snapbox parents, cannot snap to ' + location;
+      throw 'Error: Snapbox "' + props.snapboxName + '" has no Snapbox parents, cannot snap to "' + location + '"';
     }
 
     add_anchors_and_reflections(anchors_and_reflections, snap, parent_snap_location);
   });
-  var dimensions = get_initial_dimensions(props.snaps, props._parent ? props._parent_positions[props._parent] : viewport_position);
+  var dimensions = get_initial_dimensions(props.snaps, props._parent ? props._parent_positions[props._parent] : viewport_position, viewport_position);
   var position = get_final_position(dimensions, anchors_and_reflections);
 
   var parent_positions = _objectSpread2({}, props._parent_positions);
@@ -327,47 +340,25 @@ function Snapbox(props) {
     position: 'fixed'
   };
 
-  if (props.main) {
-    if (other_children.length) {
-      return /*#__PURE__*/React.createElement("div", {
-        snapboxname: props.snapboxName,
-        style: css,
-        snapboxmain: "true"
-      }, /*#__PURE__*/React.createElement("div", {
-        style: _objectSpread2({
-          height: '100%',
-          width: '100%'
-        }, props.snapboxStyle)
-      }, other_children), snapbox_children);
-    } else {
-      return /*#__PURE__*/React.createElement("div", {
-        snapboxname: props.snapboxName,
-        style: css,
-        snapboxmain: "true"
-      }, snapbox_children);
-    }
+  if (other_children.length) {
+    return /*#__PURE__*/React.createElement("div", {
+      snapboxname: props.snapboxName,
+      style: css
+    }, /*#__PURE__*/React.createElement("div", {
+      style: _objectSpread2({
+        height: '100%',
+        width: '100%'
+      }, props.snapboxStyle)
+    }, other_children), snapbox_children);
   } else {
-    if (other_children.length) {
-      return /*#__PURE__*/React.createElement("div", {
-        snapboxname: props.snapboxName,
-        style: css
-      }, /*#__PURE__*/React.createElement("div", {
-        style: _objectSpread2({
-          height: '100%',
-          width: '100%'
-        }, props.snapboxStyle)
-      }, other_children), snapbox_children);
-    } else {
-      return /*#__PURE__*/React.createElement("div", {
-        snapboxname: props.snapboxName,
-        style: css
-      }, snapbox_children);
-    }
+    return /*#__PURE__*/React.createElement("div", {
+      snapboxname: props.snapboxName,
+      style: css
+    }, snapbox_children);
   }
 }
 
 Snapbox.defaultProps = {
-  main: false,
   snapboxName: 'main',
   snaps: {},
   snapboxStyle: {},

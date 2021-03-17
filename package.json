@@ -1,6 +1,6 @@
 {
   "name": "snapbox",
-  "version": "2.1.0",
+  "version": "2.1.4",
   "description": "A quick and easy way to bring UI layout from concept to display, without CSS",
   "author": "Coleman Smith <csmitt23@gmail.com>",
   "license": "Apache-2.0",
