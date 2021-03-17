@@ -177,7 +177,7 @@ function get_final_position(dimensions, anchors_and_reflections) {
 
 function Snapbox(props) {
 
-  console.log('snapping ' + props.name + '...');
+  console.log('snapping ' + props.snapboxName + '...');
 
   let anchors_and_reflections = {};
   if (!props.main) {
@@ -186,7 +186,7 @@ function Snapbox(props) {
 
       const [parent, parent_snap] = location.split(' ');
 
-      let parent_snap_location = get_snap_coordinates(props.parentPositions[parent], parent_snap);
+      let parent_snap_location = get_snap_coordinates(props._parent_positions[parent], parent_snap);
 
       add_anchors_and_reflections(anchors_and_reflections, snap, parent_snap_location);
     });
@@ -195,7 +195,7 @@ function Snapbox(props) {
   let position;
   let viewport_dimensions = useWindowDimensions();
   if (!props.main) {
-    let dimensions = get_initial_dimensions(props.snaps, props.parentPositions[props.parent], props.parentPositions['main']);
+    let dimensions = get_initial_dimensions(props.snaps, props._parent_positions[props._parent], props._parent_positions['main']);
     position = get_final_position(dimensions, anchors_and_reflections);
   }
   else {
@@ -203,14 +203,14 @@ function Snapbox(props) {
   }
 
 
-  let parentPositions = {...props.parentPositions};
-  parentPositions[props.name] = position;
+  let parent_positions = {...props._parent_positions};
+  parent_positions[props.snapboxName] = position;
 
   let snapbox_children = [];
   let other_children = [];
   React.Children.forEach(props.children, (child, index) => {
-    if (child.props.is_snapbox) {
-      snapbox_children.push(React.cloneElement(child, {parentPositions: parentPositions, parent: props.name, key: props.name + String(index)}));
+    if (child.props._is_snapbox) {
+      snapbox_children.push(React.cloneElement(child, {_parent_positions: parent_positions, _parent: props.snapboxName, key: props.snapboxName + String(index)}));
     }
     else other_children.push(child);
   });
@@ -225,8 +225,8 @@ function Snapbox(props) {
   if (props.main) {
     if (other_children.length) {
       return (
-        <div snapboxname={props.name} style={css} snapboxmain='true'>
-          {<div style={{height: '100%', width: '100%', ...props.divStyles}}>
+        <div snapboxname={props.snapboxName} style={css} snapboxmain='true'>
+          {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
             {other_children}
           </div>}
           {snapbox_children}
@@ -235,7 +235,7 @@ function Snapbox(props) {
     }
     else {
       return (
-        <div snapboxname={props.name} style={css} snapboxmain='true'>
+        <div snapboxname={props.snapboxName} style={css} snapboxmain='true'>
           {snapbox_children}
         </div>
       );
@@ -244,8 +244,8 @@ function Snapbox(props) {
   else {
     if (other_children.length) {
       return (
-        <div snapboxname={props.name} style={css}>
-          {<div style={{height: '100%', width: '100%', ...props.divStyles}}>
+        <div snapboxname={props.snapboxName} style={css}>
+          {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
             {other_children}
           </div>}
           {snapbox_children}
@@ -254,7 +254,7 @@ function Snapbox(props) {
     }
     else {
       return (
-        <div snapboxname={props.name} style={css}>
+        <div snapboxname={props.snapboxName} style={css}>
           {snapbox_children}
         </div>
       );
@@ -263,10 +263,12 @@ function Snapbox(props) {
 }
 
 Snapbox.defaultProps = {
-  is_snapbox: true,
-  name: 'main',
-  parentPositions: {},
+  main: false,
+  snapboxName: 'main',
   snaps: {},
+  snapboxStyle: {},
+  _is_snapbox: true,
+  _parent_positions: {},
 };
 
 
