@@ -165,12 +165,12 @@ function get_snap_coordinates(position, snap) {
 
 
 function add_anchors_and_reflections(anchors_and_reflections, snap, location) {
-  if (snap === 'c' && !(snap.includes('l') || snap.includes('r'))) {
+  if (snap.includes('c') && !(snap.includes('l') || snap.includes('r'))) {
     if (typeof anchors_and_reflections.reflect_leftright !== 'undefined') console.log('Snaps may directly conflict, be careful with undefined behaviour');else if (typeof anchors_and_reflections.anchor_left !== 'undefined' && typeof anchors_and_reflections.anchor_right !== 'undefined') console.log('Snaps may indirectly conflict, be careful with undefined behaviour');
     anchors_and_reflections['reflect_leftright'] = location.x;
   }
 
-  if (snap === 'c' && !(snap.includes('t') || snap.includes('b'))) {
+  if (snap.includes('c') && !(snap.includes('t') || snap.includes('b'))) {
     if (typeof anchors_and_reflections.reflect_topbottom !== 'undefined') console.log('Snaps may directly conflict, be careful with undefined behaviour');else if (typeof anchors_and_reflections.anchor_top !== 'undefined' && typeof anchors_and_reflections.anchor_bottom !== 'undefined') console.log('Snaps may indirectly conflict, be careful with undefined behaviour');
     anchors_and_reflections['reflect_topbottom'] = location.y;
   }
@@ -291,9 +291,15 @@ function Snapbox(props) {
     });
   }
 
-  var dimensions = useWindowDimensions();
-  if (!props.main) dimensions = get_initial_dimensions(props.snaps, props.parentPositions[props.parent], props.parentPositions['main']);
-  var position = get_final_position(dimensions, anchors_and_reflections);
+  var position;
+  var viewport_dimensions = useWindowDimensions();
+
+  if (!props.main) {
+    var dimensions = get_initial_dimensions(props.snaps, props.parentPositions[props.parent], props.parentPositions['main']);
+    position = get_final_position(dimensions, anchors_and_reflections);
+  } else {
+    position = get_final_position(viewport_dimensions, anchors_and_reflections);
+  }
 
   var parentPositions = _objectSpread2({}, props.parentPositions);
 
