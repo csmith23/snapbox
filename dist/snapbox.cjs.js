@@ -197,7 +197,7 @@ function add_anchors_and_reflections(anchors_and_reflections, snap, location) {
 } // gets the initial dimensions of the snapbox to be translated from viewport or props
 
 
-function get_initial_dimensions(dimensions, parentPosition, mainPosition) {
+function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   var width = dimensions.width,
       height = dimensions.height;
   if (typeof width === 'number') // % of viewport
@@ -270,48 +270,58 @@ function get_final_position(dimensions, anchors_and_reflections) {
 }
 
 function Snapbox(props) {
-  console.log('snapping ' + props.name + '...');
+  console.log('snapping ' + props.snapboxName + '...');
+  var viewport_dimensions = useWindowDimensions();
+
+  var viewport_position = _objectSpread2({
+    left: 0,
+    top: 0,
+    right: viewport_dimensions.width,
+    bottom: viewport_dimensions.height
+  }, viewport_dimensions);
+
   var anchors_and_reflections = {};
+  Object.entries(props.snaps).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        snap = _ref2[0],
+        location = _ref2[1];
 
-  if (!props.main) {
-    Object.entries(props.snaps).forEach(function (_ref) {
-      var _ref2 = _slicedToArray(_ref, 2),
-          snap = _ref2[0],
-          location = _ref2[1];
+    if (snap === 'width' || snap === 'height') return;
+    var parent_snap_location;
 
-      if (snap === 'width' || snap === 'height') return;
-
+    if (location.includes(' ') && props._parent) {
       var _location$split = location.split(' '),
           _location$split2 = _slicedToArray(_location$split, 2),
           parent = _location$split2[0],
           parent_snap = _location$split2[1];
 
-      var parent_snap_location = get_snap_coordinates(props.parentPositions[parent], parent_snap);
-      add_anchors_and_reflections(anchors_and_reflections, snap, parent_snap_location);
-    });
-  }
+      if (props._parent_positions[parent] === 'undefined') {
+        throw 'Snapbox ' + props.snapboxName + ' has no parent Snapbox named ' + parent;
+      }
 
-  var position;
-  var viewport_dimensions = useWindowDimensions();
+      parent_snap_location = get_snap_coordinates(props._parent_positions[parent], parent_snap);
+    } else if (!location.includes(' ')) {
+      parent_snap_location = get_snap_coordinates(viewport_position, location);
+    } else {
+      throw 'Snapbox ' + props.snapboxName + ' has no Snapbox parents, cannot snap to ' + location;
+    }
 
-  if (!props.main) {
-    var dimensions = get_initial_dimensions(props.snaps, props.parentPositions[props.parent], props.parentPositions['main']);
-    position = get_final_position(dimensions, anchors_and_reflections);
-  } else {
-    position = get_final_position(viewport_dimensions, anchors_and_reflections);
-  }
+    add_anchors_and_reflections(anchors_and_reflections, snap, parent_snap_location);
+  });
+  var dimensions = get_initial_dimensions(props.snaps, props._parent ? props._parent_positions[props._parent] : viewport_position);
+  var position = get_final_position(dimensions, anchors_and_reflections);
 
-  var parentPositions = _objectSpread2({}, props.parentPositions);
+  var parent_positions = _objectSpread2({}, props._parent_positions);
 
-  parentPositions[props.name] = position;
+  parent_positions[props.snapboxName] = position;
   var snapbox_children = [];
   var other_children = [];
   React__default['default'].Children.forEach(props.children, function (child, index) {
-    if (child.props.is_snapbox) {
+    if (child.props._is_snapbox) {
       snapbox_children.push( /*#__PURE__*/React__default['default'].cloneElement(child, {
-        parentPositions: parentPositions,
-        parent: props.name,
-        key: props.name + String(index)
+        _parent_positions: parent_positions,
+        _parent: props.snapboxName,
+        key: props.snapboxName + String(index)
       }));
     } else other_children.push(child);
   });
@@ -326,18 +336,18 @@ function Snapbox(props) {
   if (props.main) {
     if (other_children.length) {
       return /*#__PURE__*/React__default['default'].createElement("div", {
-        snapboxname: props.name,
+        snapboxname: props.snapboxName,
         style: css,
         snapboxmain: "true"
       }, /*#__PURE__*/React__default['default'].createElement("div", {
         style: _objectSpread2({
           height: '100%',
           width: '100%'
-        }, props.divStyles)
+        }, props.snapboxStyle)
       }, other_children), snapbox_children);
     } else {
       return /*#__PURE__*/React__default['default'].createElement("div", {
-        snapboxname: props.name,
+        snapboxname: props.snapboxName,
         style: css,
         snapboxmain: "true"
       }, snapbox_children);
@@ -345,17 +355,17 @@ function Snapbox(props) {
   } else {
     if (other_children.length) {
       return /*#__PURE__*/React__default['default'].createElement("div", {
-        snapboxname: props.name,
+        snapboxname: props.snapboxName,
         style: css
       }, /*#__PURE__*/React__default['default'].createElement("div", {
         style: _objectSpread2({
           height: '100%',
           width: '100%'
-        }, props.divStyles)
+        }, props.snapboxStyle)
       }, other_children), snapbox_children);
     } else {
       return /*#__PURE__*/React__default['default'].createElement("div", {
-        snapboxname: props.name,
+        snapboxname: props.snapboxName,
         style: css
       }, snapbox_children);
     }
@@ -363,10 +373,13 @@ function Snapbox(props) {
 }
 
 Snapbox.defaultProps = {
-  is_snapbox: true,
-  name: 'main',
-  parentPositions: {},
-  snaps: {}
+  main: false,
+  snapboxName: 'main',
+  snaps: {},
+  snapboxStyle: {},
+  _is_snapbox: true,
+  _parent_positions: {},
+  _parent: false
 };
 
 module.exports = Snapbox;
