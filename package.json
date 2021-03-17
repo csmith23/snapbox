@@ -1,30 +1,44 @@
 {
   "name": "snapbox",
-  "version": "1.1.2",
-  "description": "A fast and easy way to take UI layout from the page to the display",
-  "main": "dist/snapbox.min.js",
-  "scripts": {
-    "build": "rollup -c -o dist/snapbox.min.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "2.0.1",
+  "description": "A quick and easy way to bring UI layout from concept to display, without CSS",
+  "author": "Coleman Smith <csmitt23@gmail.com>",
+  "license": "Apache-2.0",
+  "main": "dist/snapbox.cjs.js",
+  "module": "dist/snapbox.esm.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/csmith23/snapbox.git"
   },
+  "files": [
+    "dist/*"
+  ],
   "keywords": [
     "react",
     "snapbox",
-    "layout"
+    "layout",
+    "ui"
   ],
-  "author": "Coleman Smith <csmitt23@gmail.com>",
-  "license": "Apache-2.0",
+  "scripts": {
+    "build": "rollup -c; cp src/snapbox.js dist/snapbox.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
   "devDependencies": {
-    "@babel/core": "^7.1.0",
-    "@babel/preset-react": "^7.0.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "react": "^16.5.2",
-    "rollup": "^0.66.2",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-terser": "^3.0.0"
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/preset-env": "^7.13.10",
+    "@babel/preset-react": "^7.12.13",
+    "@rollup/plugin-commonjs": "^17.1.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "rollup": "^2.41.4",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-visualizer": "^4.2.0"
   }
 }

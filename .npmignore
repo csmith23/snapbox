@@ -1,6 +1,8 @@
 src/
+.gitignore
 .npmignore
 .babelrc
-rollup.config.js
-.gitignore
+.eslintrc
 .git/
+rollup.*
+stats.html
