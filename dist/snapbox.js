@@ -94,7 +94,7 @@ function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   let { width, height } = dimensions;
 
   if (typeof(width) === 'number')                                             // % of viewport
-    width = width * viewportPosition.width;
+    width = width / 100 * viewportPosition.width;
   else if (typeof(width) === 'string') {
     if (/^[0-9]+px$/.test(width))                                             // px
       width = parseInt(width.slice(0, -2));
@@ -105,7 +105,7 @@ function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   }
 
   if (typeof(height) === 'number')                                            // % of viewport
-    height = height * viewportPosition.height;
+    height = height / 100 * viewportPosition.height;
   else if (typeof(height) === 'string') {
     if (/^[0-9]+px$/.test(height))                                            // px
       height = parseInt(height.slice(0, -2));

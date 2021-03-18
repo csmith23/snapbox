@@ -209,14 +209,14 @@ function get_initial_dimensions(dimensions, parentPosition, viewportPosition) {
   var width = dimensions.width,
       height = dimensions.height;
   if (typeof width === 'number') // % of viewport
-    width = width * viewportPosition.width;else if (typeof width === 'string') {
+    width = width / 100 * viewportPosition.width;else if (typeof width === 'string') {
     if (/^[0-9]+px$/.test(width)) // px
       width = parseInt(width.slice(0, -2));else if (/^[0-9]+(?:.[0-9]+)?%$/.test(width)) // % of parent
       width = parseFloat(width.slice(0, -1)) / 100 * parentPosition.width;else if (/^[0-9]+(?:.[0-9]+)?$/.test(width)) // % of viewport
       width = parseFloat(width) / 100 * viewportPosition.width;
   }
   if (typeof height === 'number') // % of viewport
-    height = height * viewportPosition.height;else if (typeof height === 'string') {
+    height = height / 100 * viewportPosition.height;else if (typeof height === 'string') {
     if (/^[0-9]+px$/.test(height)) // px
       height = parseInt(height.slice(0, -2));else if (/^[0-9]+(?:.[0-9]+)?%$/.test(height)) // % of parent
       height = parseFloat(height.slice(0, -1)) / 100 * parentPosition.height;else if (/^[0-9]+(?:.[0-9]+)?$/.test(height)) // % of viewport
