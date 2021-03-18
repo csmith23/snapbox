@@ -240,7 +240,7 @@ function Snapbox(props) {
   if (other_children.length) {
     return (
       <div snapboxname={props.snapboxName} style={css}>
-        {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}>
+        {<div style={{height: '100%', width: '100%', ...props.snapboxStyle}}  className={props.snapboxClass}>
           {other_children}
         </div>}
         {snapbox_children}
@@ -259,6 +259,7 @@ function Snapbox(props) {
 Snapbox.defaultProps = {
   snapboxName: 'main',
   snaps: {},
+  snapboxClass: '',
   snapboxStyle: {},
   _is_snapbox: true,
   _parent_positions: {},

@@ -348,7 +348,8 @@ function Snapbox(props) {
       style: _objectSpread2({
         height: '100%',
         width: '100%'
-      }, props.snapboxStyle)
+      }, props.snapboxStyle),
+      className: props.snapboxClass
     }, other_children), snapbox_children);
   } else {
     return /*#__PURE__*/React.createElement("div", {
@@ -361,6 +362,7 @@ function Snapbox(props) {
 Snapbox.defaultProps = {
   snapboxName: 'main',
   snaps: {},
+  snapboxClass: '',
   snapboxStyle: {},
   _is_snapbox: true,
   _parent_positions: {},
